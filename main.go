@@ -34,16 +34,25 @@ func handler(request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLR
 	// section for get all
 	case fmt.Sprintf("/%s/api", os.Getenv("stage")):
 		method := request.RequestContext.HTTP.Method
+		fmt.Print(method)
 		if method == "GET" {
 			response = routes.GetAllBirthdays(coll, table)
-		} else if method == "POST"{
+		} else if method == "POST" {
 			bday := birthday.Birthday{}
 			err := json.Unmarshal([]byte(request.Body), &bday)
 			if err != nil {
 				response = events.LambdaFunctionURLResponse{StatusCode: http.StatusBadRequest, Body: "cannot decode body"}
 			}
 			response = routes.AddBirthday(coll, table, bday)
-		}else{
+		} else if method == "DELETE" {
+			bday := birthday.Birthday{}
+			err := json.Unmarshal([]byte(request.Body), &bday)
+			if err != nil {
+				response = events.LambdaFunctionURLResponse{StatusCode: http.StatusBadRequest, Body: "cannot decode body"}
+			}
+			response = routes.DeleteBirthday(coll, table, bday)
+
+		} else {
 			bday := birthday.Birthday{}
 			err := json.Unmarshal([]byte(request.Body), &bday)
 			query := request.QueryStringParameters
