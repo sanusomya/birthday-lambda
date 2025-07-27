@@ -1,0 +1,21 @@
+*bootstrap*
+# Binaries for programs
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*_test
+
+# Dependency management
+# Go modules create go.mod and go.sum, which *should* be committed.
+# However, if you are using older dependency management tools like godep,
+# you might need to ignore their vendor directories.
+# /vendor/
+
+# IDE and OS generated files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
