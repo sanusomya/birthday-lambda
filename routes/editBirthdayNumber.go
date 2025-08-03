@@ -9,12 +9,31 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	database "github.com/sanusomya/birthday-lambda/database"
 	birthday "github.com/sanusomya/birthday-lambda/models"
+	utils "github.com/sanusomya/birthday-lambda/utils"
 )
 
 func EditBirthdayNumber(coll *dynamodb.DynamoDB, table string, name string, mobile int64, body int64) events.LambdaFunctionURLResponse {
 
 	if len(name) == 0 || mobile == 0 {
 		return events.LambdaFunctionURLResponse{StatusCode: http.StatusBadRequest, Body: "input the query strings of name and mobile."}
+	}
+
+	errMsg := utils.CustomError{}
+	
+	if !utils.ValidMobile(mobile) || !utils.ValidMobile(body){
+		errMsg.StatusCode = http.StatusBadRequest
+		errMsg.Attribute = "mobile"
+		errMsg.Message = "Not a valide mobile number. Mobile number should be 10 digits, not starting with a 0."
+		body,_ := json.Marshal(errMsg)
+		return events.LambdaFunctionURLResponse{StatusCode: http.StatusBadRequest, Body: string(body)}
+	}
+
+	if !utils.ValidName(name) {
+		errMsg.StatusCode = http.StatusBadRequest
+		errMsg.Attribute = "name"
+		errMsg.Message = "Not a valide Name. Length of name shouldnt exceed 9 and should only contain Alphabets."
+		body,_ := json.Marshal(errMsg)
+		return events.LambdaFunctionURLResponse{StatusCode: http.StatusBadRequest, Body: string(body)}
 	}
 
 	bday, err := database.Get(coll, table, name, int64(mobile))

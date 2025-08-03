@@ -34,7 +34,6 @@ func handler(request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLR
 	// section for get all
 	case fmt.Sprintf("/%s/api", os.Getenv("stage")):
 		method := request.RequestContext.HTTP.Method
-		fmt.Print(method)
 		if method == "GET" {
 			response = routes.GetAllBirthdays(coll, table)
 		} else if method == "POST" {
